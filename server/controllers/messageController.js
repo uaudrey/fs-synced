@@ -1,3 +1,5 @@
+const { Message } = require("./models/messageModel");
+
 const asyncHandler = require("express-async-handler");
 
 // @desc    Delete message

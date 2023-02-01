@@ -5,7 +5,8 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const { Message, Conversation } = require("./models");
+const { Conversation } = require("./models/conversationModel");
+const { Message } = require("./models/messageModel");
 const { errorHandler } = require("./middleware/errorMiddleware");
 
 const PORT = process.env.PORT || 5000;

@@ -1,3 +1,5 @@
+const { Conversation } = require("./models/conversationModel");
+const { Message } = require("./models/messageModel");
 const asyncHandler = require("express-async-handler");
 
 // @desc    Get all conversations
@@ -56,7 +58,9 @@ module.exports = {
 
 // app.post("/", async (req, res) => {
 //   const newMessage = new Message({ ...req.body });
-//   const insertedMessage = await newMessage.save();
+//   const insertedMessage = await newMessage.save((err) => {
+//      if (err) return handleError(err);
+// });
 //   return res.status(201).json(insertedMessage);
 // });
 

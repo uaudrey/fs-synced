@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const MessageSchema = new mongoose.Schema({
-  messageID: {
-    type: Number,
-    required: true,
+  conversation: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Conversation",
   },
   sender: {
     type: String,
@@ -20,25 +20,7 @@ const MessageSchema = new mongoose.Schema({
   },
   status: {
     type: Boolean,
-    required: true,
-  },
-  platform: {
-    type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    required: false,
-  },
-});
-
-const ConversationSchema = new mongoose.Schema({
-  conversation_id: {
-    type: Number,
-    required: true,
-  },
-  sender: {
-    type: String,
+    default: false,
     required: true,
   },
   platform: {
@@ -52,6 +34,5 @@ const ConversationSchema = new mongoose.Schema({
 });
 
 const Message = mongoose.model("Message", MessageSchema);
-const Conversation = mongoose.model("Conversation", ConversationSchema);
 
-module.exports = { Message, Conversation };
+module.exports = { Message };
