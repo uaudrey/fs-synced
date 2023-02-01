@@ -39,12 +39,16 @@ const start = async () => {
 const conversationsRouter = require("./routes/conversationRoutes");
 app.use("/conversations", conversationsRouter);
 
+const messagesRouter = require("./routes/messageRoutes");
+app.use("/messages", messagesRouter);
+// app.use("/conversations/:id/messages", messagesRouter);
+
 app.use(errorHandler);
 
 start();
 
 // const uri =
-//   "mongodb+srv://uaudrey:mEZEnwanyi32@capdb.iaosxkz.mongodb.net/synced_db";
+//   "mongodb+srv://uaudrey:password@capdb.iaosxkz.mongodb.net/synced_db";
 // console.log(uri);
 // console.log(uri_env);
 

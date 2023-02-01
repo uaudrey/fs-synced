@@ -2,21 +2,21 @@ const express = require("express");
 const router = express.Router();
 const {
   getConversations,
-  getOneConversation,
   createConversation,
   deleteConversation,
+  getMessages,
+  createMessage,
 } = require("../controllers/conversationController");
 
 router.route("/").get(getConversations).post(createConversation);
-router.route("/:id").get(getOneConversation).delete(deleteConversation);
+router.route("/:conversationID").delete(deleteConversation);
+router.route("/:conversationID/messages").get(getMessages).post(createMessage);
 
 // router.get("/", getConversations);
-// router.get("/:id", getOneConversation);
 // router.post("/", createConversation);
-// router.delete("/:id", deleteConversation);
+// router.delete("/:conversationID", deleteConversation);
+
+// router.get("/:conversationID/messages");
+// router.post("/:conversationID/messages");
 
 module.exports = router;
-
-// app.get("/conversations", async (req, res) => {
-//   return res.json({ message: "Hello, World ✌️" });
-// });
