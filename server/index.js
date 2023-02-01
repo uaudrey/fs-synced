@@ -1,11 +1,12 @@
-mongoose.set("strictQuery", false);
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+mongoose.set("strictQuery", false);
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const { Message } = require("./models");
+const { Message, Conversation } = require("./models");
+const { errorHandler } = require("./middleware/errorMiddleware");
 
 const PORT = process.env.PORT || 5000;
 dotenv.config();
@@ -17,38 +18,28 @@ const app = express();
 // app.use("/", require("./routes/root"));
 app.use(cors());
 app.use(express.json());
+// app.use(require("./routes/record"));
 
 // db.messages.createIndex({ messageID: 1 }, { unique: true });
-
-app.get("/", async (req, res) => {
-  return res.json({ message: "Hello, World ✌️" });
-});
 
 const start = async () => {
   try {
     await mongoose.connect(uri);
-    app.listen(5000, () => console.log("Server started on port 5000"));
+    const db = mongoose.connection;
+    db.on("error", (error) => console.error(error));
+    db.once("open", () => console.log("Connected to database"));
+
+    app.listen(PORT, () => console.log(`Server started on port ${5000}`));
   } catch (error) {
     console.error(error);
     process.exit(1);
   }
 };
 
-app.post("/", async (req, res) => {
-  // const MessageSchema = new mongoose.Schema({
-  //   body: {
-  //     type: String,
-  //     required: true,
-  //   },
-  // });
-  // const Message = mongoose.model("Message", MessageSchema);
+const conversationsRouter = require("./routes/conversationRoutes");
+app.use("/conversations", conversationsRouter);
 
-  const newMessage = new Message({ ...req.body });
-  const insertedMessage = await newMessage.save();
-  return res.status(201).json(insertedMessage);
-
-  // return res.json({ message: "Hello, World ✌️" });
-});
+app.use(errorHandler);
 
 start();
 

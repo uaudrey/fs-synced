@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const MessageSchema = new mongoose.Schema({
-  id: {
+  messageID: {
     type: Number,
     required: true,
   },
@@ -26,9 +26,32 @@ const MessageSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // type: "tbd",
+  type: {
+    type: String,
+    required: false,
+  },
+});
+
+const ConversationSchema = new mongoose.Schema({
+  conversation_id: {
+    type: Number,
+    required: true,
+  },
+  sender: {
+    type: String,
+    required: true,
+  },
+  platform: {
+    type: String,
+    required: true,
+  },
+  type: {
+    type: String,
+    required: false,
+  },
 });
 
 const Message = mongoose.model("Message", MessageSchema);
+const Conversation = mongoose.model("Conversation", ConversationSchema);
 
-module.exports = { Message };
+module.exports = { Message, Conversation };
