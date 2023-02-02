@@ -13,13 +13,13 @@ const ConversationSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  messages: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "Message",
-    },
-  ],
+  // messages: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     required: true,
+  //     ref: "Message",
+  //   },
+  // ],
 });
 
 const Conversation = mongoose.model("Conversation", ConversationSchema);

@@ -9,8 +9,8 @@ const {
 } = require("../controllers/conversationController");
 
 router.route("/").get(getConversations).post(createConversation);
-router.route("/:conversationID").delete(deleteConversation);
-router.route("/:conversationID/messages").get(getMessages).post(createMessage);
+router.route("/:conversationId").delete(deleteConversation);
+router.route("/:conversationId/messages").get(getMessages).post(createMessage);
 
 // router.get("/", getConversations);
 // router.post("/", createConversation);
