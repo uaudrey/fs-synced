@@ -1,68 +1,63 @@
 const express = require("express");
-const cors = require("cors");
 const path = require("path");
+const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 const { errorHandler } = require("./middleware/errorMiddleware");
 const connectDB = require("./config/db");
+const serverless = require("serverless-http");
+const { App, ExpressReceiver } = require("@slack/bolt");
 
 connectDB();
 
 const PORT = process.env.PORT || 5000;
+
 const app = express();
 
+// const boltReceiver = new ExpressReceiver({signingSecret: process.env.SLACK_SIGNING_SECRET, endpoints: '/'});
+// const boltApp = new App({
+//   token: process.env.SLACK_BOT_TOKEN,
+//   signingSecret: process.env.SLACK_SIGNING_SECRET,
+//   receiver: boltReceiver
+// });
+
 // Middleware
-// app.use('/', express.static(path.join(__dirname, '/public')))
-// app.use("/", require("./routes/root"));
 app.use(cors());
+// app.use('/', boltReceiver.router)
 app.use(express.json());
 
+// boltApp.event("member_joined_channel", ({ event }) =>
+//   handleMemberJoined(event)
+// );
+// boltApp.event("message", ({ event }) => handleMessage(event));
+
+// app.use(`/events/${botSubpath}`, boltReceiver.router);
+
 // Routes
-const conversationsRouter = require("./routes/conversationRoutes");
-app.use("/conversations", conversationsRouter);
-const messagesRouter = require("./routes/messageRoutes");
-app.use("/messages", messagesRouter);
+const conversationsRouter = require("./dbRoutes/conversationRoutes");
+app.use("/default/synced-lambda/conversations", conversationsRouter);
+const messagesRouter = require("./dbRoutes/messageRoutes");
+app.use("/default/synced-lambda/messages", messagesRouter);
+const userRouter = require("./dbRoutes/userRoutes");
+app.use("/default/synced-lambda/users", userRouter);
+
+app.get("/default/synced-lambda", (req, res) => res.send("Namaste 🙏"));
+
+// const slackVerification = app.post("/default/synced-lambda", (req, res) => {
+//   let challenge = req.body.challenge;
+//   if (challenge) {
+//     res.status(200);
+//     res.contentType("text/plain");
+//     res.send(challenge);
+//   }
+// });
 
 app.use(errorHandler);
 
-app.listen(PORT, () => console.log(`Server started on port ${5000}`));
-
-// const start = async () => {
-//   try {
-//     await mongoose.connect(uri);
-//     const db = mongoose.connection;
-//     db.on("error", (error) => console.error(error));
-//     db.once("open", () => console.log("Connected to database"));
-
-//     app.listen(PORT, () => console.log(`Server started on port ${5000}`));
-//   } catch (error) {
-//     console.error(error);
-//     process.exit(1);
-//   }
-// };
-
-// start();
-
-// const { MongoClient, ServerApiVersion } = require("mongodb");
-// const { Conversation } = require("./models/conversationModel");
-// const { Message } = require("./models/messageModel");
-
-// const uri = process.env.MONGO_URI;
-
-// const uri =
-//   "mongodb+srv://uaudrey:password@capdb.iaosxkz.mongodb.net/synced_db";
-// console.log(uri);
-// console.log(uri_env);
-
-// const client = new MongoClient(uri, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-//   serverApi: ServerApiVersion.v1,
-// });
-// client.connect((err) => {
-//   const collection = client.db("synced_db").collection("devices");
-//   // perform actions on the collection object
-//   client.close();
-// });
+if (process.env.NODE_ENV === "production") {
+  exports.handler = serverless(app);
+} else {
+  app.listen(PORT, () => console.log(`Server started on port ${5000}`));
+}

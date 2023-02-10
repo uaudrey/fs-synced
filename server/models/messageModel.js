@@ -31,6 +31,11 @@ const MessageSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  // user: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   required: true,
+  //   ref: "User",
+  // },
 });
 
 const Message = mongoose.model("Message", MessageSchema);

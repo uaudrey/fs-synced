@@ -7,10 +7,17 @@ const {
   getMessages,
   createMessage,
 } = require("../controllers/conversationController");
+const { protect } = require("../middleware/authMiddleware");
 
-router.route("/").get(getConversations).post(createConversation);
-router.route("/:conversationId").delete(deleteConversation);
-router.route("/:conversationId/messages").get(getMessages).post(createMessage);
+router
+  .route("/")
+  .get(protect, getConversations)
+  .post(protect, createConversation);
+router.route("/:conversationId").delete(protect, deleteConversation);
+router
+  .route("/:conversationId/messages")
+  .get(protect, getMessages)
+  .post(protect, createMessage);
 
 // router.get("/", getConversations);
 // router.post("/", createConversation);

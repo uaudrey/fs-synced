@@ -1,27 +1,28 @@
 const { Conversation } = require("../models/conversationModel");
 const { Message } = require("../models/messageModel");
+const { User } = require("../models/userModel");
 const asyncHandler = require("express-async-handler");
 
 // @desc    Get all conversations
 // @route   GET /conversations
 // @access  Private
 const getConversations = asyncHandler(async (req, res) => {
-  const conversations = await Conversation.find();
+  const conversations = await Conversation.find({ user: req.user.id });
   return res.status(200).json(conversations);
 });
 
 // @desc    Create conversation
-// @route   POST /conversations/
+// @route   POST /conversations
 // @access  Private
 // @req     sender, platform
 const createConversation = asyncHandler(async (req, res) => {
   if (!req.body.sender || !req.body.platform) {
     res.status(400);
     throw new Error("Incomplete data");
-    // .json({ Details: "Invalid Data" });
   }
 
   const conversation = await Conversation.create({
+    user: req.user.id,
     sender: req.body.sender,
     platform: req.body.platform,
     type: req.body.type,
@@ -31,7 +32,7 @@ const createConversation = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete conversation
-// @route   DELETE /conversations/<conversation_id>
+// @route   DELETE /conversations/<conversationId>
 // @access  Private
 const deleteConversation = asyncHandler(async (req, res) => {
   const conversation = await Conversation.findById(req.params.conversationId);
@@ -39,6 +40,20 @@ const deleteConversation = asyncHandler(async (req, res) => {
   if (!conversation) {
     res.status(400);
     throw new Error("Conversation not found");
+  }
+
+  const user = await User.findById(req.user.id);
+
+  // Check for user
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Check if logged in user matches the conversation user
+  if (conversation.user.toString() != user.id) {
+    res.status(401);
+    throw new Error("User not authorized");
   }
 
   // await conversation.remove();
@@ -51,7 +66,7 @@ const deleteConversation = asyncHandler(async (req, res) => {
 // def get_cards_from_board(board_id):
 
 // @desc    Get all messages
-// @route   GET /conversations/<conversation_id>/messages
+// @route   GET /conversations/<conversationId>/messages
 // @access  Private
 const getMessages = asyncHandler(async (req, res) => {
   const conversation = await Conversation.findById(req.params.conversationId);
@@ -61,6 +76,20 @@ const getMessages = asyncHandler(async (req, res) => {
     throw new Error("Conversation not found");
   }
 
+  const user = await User.findById(req.user.id);
+
+  // Check for user
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Check if logged in user matches the conversation user
+  if (conversation.user.toString() != user.id) {
+    res.status(401);
+    throw new Error("User not authorized");
+  }
+
   const messages = await Message.find({
     conversation: req.params.conversationId,
   });
@@ -68,7 +97,7 @@ const getMessages = asyncHandler(async (req, res) => {
 });
 
 // @desc    Create message
-// @route   POST /conversations/<conversation_id>/messages
+// @route   POST /conversations/<conversationId>/messages
 // @access  Private
 // @req     sender, body, timestamp, platform
 const createMessage = asyncHandler(async (req, res) => {
@@ -85,10 +114,25 @@ const createMessage = asyncHandler(async (req, res) => {
     const conversation = createConversation(req, res);
   }
 
+  const user = await User.findById(req.user.id);
+
+  // Check for user
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Check if logged in user matches the conversation user
+  if (conversation.user.toString() != user.id) {
+    res.status(401);
+    throw new Error("User not authorized");
+  }
+
   // Add message to conversation (i.e, add conversationId to message)
   const message = await Message.create({
     conversation: req.params.conversationId,
-    ...req.body,
+    // ...req.body,
+    text: req.body.text,
     status: "Unread",
     type: "channel_type/none",
   });

@@ -1,4 +1,6 @@
 const { Message } = require("../models/messageModel");
+const { User } = require("../models/userModel");
+const { Conversation } = require("../models/conversationModel");
 const asyncHandler = require("express-async-handler");
 
 // @desc    Delete message
@@ -10,6 +12,22 @@ const deleteMessage = asyncHandler(async (req, res) => {
   if (!message) {
     res.status(400);
     throw new Error("Message not found");
+  }
+
+  const user = await User.findById(req.user.id);
+
+  // Check for user
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  const conversation = await Conversation.findById(message.conversation);
+
+  // Check if logged in user matches the conversation user
+  if (conversation.user.toString() != user.id) {
+    res.status(401);
+    throw new Error("User not authorized");
   }
 
   await Message.deleteOne(message);
