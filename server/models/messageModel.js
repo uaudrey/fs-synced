@@ -9,7 +9,7 @@ const MessageSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  body: {
+  text: {
     type: String,
     required: true,
   },
@@ -27,15 +27,23 @@ const MessageSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  type: {
+  slackChannelId: {
+    type: Number,
+    required: false,
+  },
+  slackChannelType: {
     type: String,
     required: false,
   },
-  // user: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   required: true,
-  //   ref: "User",
+  // type: {
+  //   type: String,
+  //   required: false,
   // },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
 });
 
 const Message = mongoose.model("Message", MessageSchema);

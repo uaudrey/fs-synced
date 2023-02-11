@@ -2,6 +2,7 @@ const { Conversation } = require("../models/conversationModel");
 const { Message } = require("../models/messageModel");
 const { User } = require("../models/userModel");
 const asyncHandler = require("express-async-handler");
+const postMsgSlack = require("../apiCalls/slackAPI");
 
 // @desc    Get all conversations
 // @route   GET /conversations
@@ -101,8 +102,7 @@ const getMessages = asyncHandler(async (req, res) => {
 // @access  Private
 // @req     sender, body, timestamp, platform
 const createMessage = asyncHandler(async (req, res) => {
-  // if (!req.body.sender || !req.body.body || !req.body.platform || !req.body.timestamp) {
-  if (!req.body.sender || !req.body.body || !req.body.platform) {
+  if (!req.body.sender || !req.body.text) {
     res.status(400);
     throw new Error("Incomplete data");
   }
@@ -131,11 +131,14 @@ const createMessage = asyncHandler(async (req, res) => {
   // Add message to conversation (i.e, add conversationId to message)
   const message = await Message.create({
     conversation: req.params.conversationId,
-    // ...req.body,
-    text: req.body.text,
-    status: "Unread",
-    type: "channel_type/none",
+    ...req.body,
   });
+
+  // If Slack Conversation, post message to Slack
+  const channelId = conversation.slackChannelId;
+  if (conversation.platform === "slack") {
+    postMsgSlack(channelId, message);
+  }
 
   return res.status(201).json(message);
 });
