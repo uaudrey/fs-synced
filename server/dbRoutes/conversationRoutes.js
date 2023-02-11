@@ -12,10 +12,11 @@ const { protect } = require("../middleware/authMiddleware");
 router
   .route("/")
   .get(protect, getConversations)
-  .post(protect, createConversation);
-router.route("/:conversationId").delete(protect, deleteConversation);
+  .post(protect, createConversation)
+  .delete(protect, deleteConversation);
+// router.route("/:conversationId").delete(protect, deleteConversation);
 router
-  .route("/:conversationId/messages")
+  .route("/messages")
   .get(protect, getMessages)
   .post(protect, createMessage);
 

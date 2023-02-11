@@ -41,14 +41,18 @@ app.use(express.json());
 // Routes
 const serverRouter = require("./apiCalls/slackEventRoutes");
 app.use("/default/synced-lambda/", serverRouter);
+
 const oauthRouter = require("./apiCalls/slackOauthRoutes");
 app.use("/default/synced-lambda/auth/slack", oauthRouter);
-const conversationsRouter = require("./dbRoutes/conversationRoutes");
-app.use("/default/synced-lambda/conversations", conversationsRouter);
-const messagesRouter = require("./dbRoutes/messageRoutes");
-app.use("/default/synced-lambda/messages", messagesRouter);
+
 const userRouter = require("./dbRoutes/userRoutes");
 app.use("/default/synced-lambda/users", userRouter);
+
+const conversationsRouter = require("./dbRoutes/conversationRoutes");
+app.use("/default/synced-lambda/conversations", conversationsRouter);
+
+const messagesRouter = require("./dbRoutes/messageRoutes");
+app.use("/default/synced-lambda/messages", messagesRouter);
 
 // Slack OAuth
 // app.get("/auth/slack", async (_, res) => {

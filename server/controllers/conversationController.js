@@ -17,16 +17,18 @@ const getConversations = asyncHandler(async (req, res) => {
 // @access  Private
 // @req     sender, platform
 const createConversation = asyncHandler(async (req, res) => {
+  // if (!req.body.sender || !req.body.platform || req.body.platformConversationId) {
   if (!req.body.sender || !req.body.platform) {
     res.status(400);
     throw new Error("Incomplete data");
   }
 
   const conversation = await Conversation.create({
-    user: req.user.id,
+    user: req.user._id,
     sender: req.body.sender,
     platform: req.body.platform,
     type: req.body.type,
+    platformConversationId: req.body.platformConversationId,
   });
 
   return res.status(201).json(conversation);
@@ -102,18 +104,26 @@ const getMessages = asyncHandler(async (req, res) => {
 // @access  Private
 // @req     sender, body, timestamp, platform
 const createMessage = asyncHandler(async (req, res) => {
-  if (!req.body.sender || !req.body.text) {
+  if (!req.body.text) {
     res.status(400);
     throw new Error("Incomplete data");
   }
+  let conversation;
 
-  const conversation = await Conversation.findById(req.params.conversationId);
+  conversation = await Conversation.findById(req.query.conversationId);
 
   if (!conversation) {
     // Create new conversation
-    const conversation = createConversation(req, res);
+    request = {
+      sender: req.body.sender,
+      platform: req.body.platform,
+      platformConversationId: req.body.platformConversationId,
+      type: req.body.type,
+    };
+    conversation = createConversation(request, res);
   }
 
+  // console.log(req);
   const user = await User.findById(req.user.id);
 
   // Check for user
@@ -131,14 +141,15 @@ const createMessage = asyncHandler(async (req, res) => {
   // Add message to conversation (i.e, add conversationId to message)
   const message = await Message.create({
     conversation: req.params.conversationId,
+    user: req.user,
     ...req.body,
   });
 
   // If Slack Conversation, post message to Slack
-  const channelId = conversation.slackChannelId;
-  if (conversation.platform === "slack") {
-    postMsgSlack(channelId, message);
-  }
+  // const channelId = conversation.slackChannelId;
+  // if (conversation.platform === "slack") {
+  //   postMsgSlack(channelId, message);
+  // }
 
   return res.status(201).json(message);
 });

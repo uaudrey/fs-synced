@@ -15,8 +15,8 @@ const ConversationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    slackChannelId: {
-      type: Number,
+    platformConversationId: {
+      type: String,
     },
     type: {
       type: String,

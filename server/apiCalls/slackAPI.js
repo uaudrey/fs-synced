@@ -3,7 +3,7 @@ const { createMessage } = require("../controllers/conversationController");
 
 const client = new WebClient();
 
-// Slack OAuth
+// SLACK OAUTH
 // app.get("/auth/slack", async (_, res) => {
 const addToSlackButton = async (_, res) => {
   const userScopes =
@@ -49,17 +49,19 @@ const slackOauthCallback = async (req, res) => {
 // const message = req.body.event.text;
 // const timestamp = req.body.event.event_ts;
 // const channelType = req.body.event.channel_type;
+
+// Use token and api_app_id to verify that the request is coming from Slack
 const getDataSlackEvent = async (req, res) => {
   const senderId = req.body.event.user;
   const senderName = getSenderData(senderId);
 
   req = {
     sender: senderName,
-    slackChannelId: req.body.event.channel,
+    platformConversationId: req.body.event.channel,
     text: req.body.event.text,
     platform: "slack",
-    timestamp: req.body.event.event_ts,
-    slackChannelType: req.body.event.channel_type,
+    eventTs: req.body.event.event_ts,
+    type: req.body.event.channel_type,
     status: "unread",
   };
 
