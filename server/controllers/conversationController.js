@@ -32,12 +32,12 @@ const createConversation = asyncHandler(async (req, res) => {
 });
 
 const createMessageServer = asyncHandler(async (req, res) => {
-  if (!req.body.text) {
+  if (!req.text) {
     res.status(400);
     throw new Error("Incomplete data");
   }
 
-  const user = await User.findById(req.body.userId);
+  const user = await User.findById(req.user);
   let conversation;
 
   // Check for user
@@ -48,18 +48,18 @@ const createMessageServer = asyncHandler(async (req, res) => {
 
   conversation = await Conversation.find()
     .where(platform)
-    .equals(req.body.platform)
+    .equals(req.platform)
     .where(platformConversationId)
-    .equals(req.body.platformConversationId);
+    .equals(req.platformConversationId);
 
   if (!conversation) {
     // Create new conversation
     request = {
-      user: req.body.userId,
-      sender: req.body.sender,
-      platform: req.body.platform,
-      platformConversationId: req.body.platformConversationId,
-      type: req.body.type,
+      user: req.user,
+      sender: req.sender,
+      platform: req.platform,
+      platformConversationId: req.platformConversationId,
+      type: req.type,
     };
     conversation = createConversation(request, res);
   }

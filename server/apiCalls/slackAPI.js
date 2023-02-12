@@ -40,7 +40,7 @@ const slackOauthCallback = async (req, res) => {
 
     await User.updateOne(
       // { _id: req.user._id },
-      { _id: "63e86b0399458809cbd2f4a0" },
+      { _id: "63e880abfff4e8f423d2e34a" },
       {
         $set: {
           slackUserId: oauthUserId,
@@ -66,10 +66,11 @@ const slackOauthCallback = async (req, res) => {
 // A HTTP POST request to '/' (the server)
 // Use token and api_app_id to verify that the request is coming from Slack
 const getDataSlackEvent = async (req, res) => {
+  console.log(req.body);
   const senderId = req.body.event.user;
   const senderName = getSenderData(senderId);
 
-  const eventAuthUserId = req.body.authed.users[0];
+  const eventAuthUserId = req.body.authorizations[0].user_id;
   const user = User.findOne({ slackUserId: eventAuthUserId });
   const userId = user._id;
 
@@ -116,7 +117,8 @@ const getSenderData = () => {
 const postMsgToSlack = async (channelId, message) => {
   try {
     await client.chat.postMessage({
-      token: req.user.accessTokens.slack,
+      // token: req.user.accessTokens.slack,
+      token: req.user.accessTokens,
       channel: channelId,
       text: message,
     });

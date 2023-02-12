@@ -39,8 +39,10 @@ const registerUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       token: generateToken(user._id),
-      slackUserId: user.slackUserId,
-      accessTokens: user.accessTokens,
+      slackUserId: "0",
+      accessTokens: "0",
+      // slackUserId: user.slackUserId,
+      // accessTokens: user.accessTokens,
     });
   } else {
     res.status(400);
