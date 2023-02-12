@@ -39,6 +39,8 @@ const registerUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       token: generateToken(user._id),
+      slackUserId: user.slackUserId,
+      accessTokens: user.accessTokens,
     });
   } else {
     res.status(400);
@@ -61,6 +63,8 @@ const loginUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       token: generateToken(user._id),
+      slackUserId: user.slackUserId,
+      accessTokens: user.accessTokens,
     });
   } else {
     res.status(400);
@@ -78,6 +82,8 @@ const getMeUser = asyncHandler(async (req, res) => {
     id: _id,
     name,
     email,
+    slackUserId,
+    accessTokens,
   });
 });
 

@@ -1,30 +1,26 @@
 const express = require("express");
 const router = express.Router();
 const {
-  getConversations,
   createConversation,
+  createMessageServer,
+  getConversations,
   deleteConversation,
   getMessages,
-  createMessage,
+  createMessageUser,
 } = require("../controllers/conversationController");
 const { protect } = require("../middleware/authMiddleware");
 
 router
   .route("/")
   .get(protect, getConversations)
-  .post(protect, createConversation)
+  .post(createConversation)
   .delete(protect, deleteConversation);
 // router.route("/:conversationId").delete(protect, deleteConversation);
+
 router
   .route("/messages")
   .get(protect, getMessages)
-  .post(protect, createMessage);
-
-// router.get("/", getConversations);
-// router.post("/", createConversation);
-// router.delete("/:conversationID", deleteConversation);
-
-// router.get("/:conversationID/messages");
-// router.post("/:conversationID/messages");
+  .post(protect, createMessageUser)
+  .post(createMessageServer);
 
 module.exports = router;

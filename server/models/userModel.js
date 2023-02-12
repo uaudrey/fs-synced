@@ -8,17 +8,27 @@ const UserSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: [true, "Please add an email."],
+      required: [true, "Please add an email address."],
       unique: true,
     },
     password: {
       type: String,
       required: [true, "Please add a password."],
     },
+    // slackUserId: [String],
+    slackUserId: {
+      type: String,
+    },
+    accessTokens: {
+      type: String,
+    },
+    // slackUserId: [{ type: String }],
+    // accessTokens: [],
   },
   {
     timestamps: true,
-  }
+  },
+  { minimize: false }
 );
 
 const User = mongoose.model("User", UserSchema);
