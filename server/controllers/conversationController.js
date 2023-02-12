@@ -38,6 +38,7 @@ const createMessageServer = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findById(req.user);
+  console.log(user);
   let conversation;
 
   // Check for user

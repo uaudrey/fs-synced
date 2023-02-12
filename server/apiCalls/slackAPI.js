@@ -13,11 +13,7 @@ const addToSlackButton = async (_, res) => {
     "channels:history,channels:read,chat:write,groups:history,im:history,mpim:history,users.profile:read,users:read";
   const redirectURL =
     "https://j16zl6cwya.execute-api.us-east-1.amazonaws.com/default/synced-lambda/auth/slack/callback";
-  // const redirectURL =
-  //   "https://localhost:5000/default/synced-lambda/auth/slack/callback";
   const url = `https://slack.com/oauth/v2/authorize?client_id=${process.env.SLACK_CLIENT_ID}&user_scope=${userScopes}&redirect_uri=${redirectURL}`;
-  // const url = `https://slack.com/oauth/v2/authorize?client_id=4723984969072.4711155160818&user_scope=channels:history,channels:read,chat:write,groups:history,im:history,mpim:history,users.profile:read,users:read&redirect_uri=https://j16zl6cwya.execute-api.us-east-1.amazonaws.com/default/synced-lambda/auth/slack/callback`;
-  // const url = `https://slack.com/oauth/v2/authorize?client_id=4723984969072.4711155160818&user_scope=channels:history,channels:read,chat:write,groups:history,im:history,mpim:history,users.profile:read,users:read&redirect_uri=https://localhost:5000/default/synced-lambda/;
 
   res.status(200).header("Content-Type", "text/html; charset=utf-8")
     .send(`<html><body>
@@ -54,9 +50,7 @@ const slackOauthCallback = async (req, res) => {
     res.status(200).send(
       `<html><body>
             <p>You have successfully logged in with your Slack account! Here are the details:</p>
-            <p>Response: ${JSON.stringify(response)}</p>
-            <p>Slack T: ${JSON.stringify(slackToken)}</p>
-            <p>OAuth Id: ${JSON.stringify(oauthUserId)}</p>`
+            <p>Response: ${JSON.stringify(response)}</p>`
     );
   } catch (err) {
     console.log("Error:", err);
